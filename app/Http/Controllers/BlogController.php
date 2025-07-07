@@ -52,19 +52,25 @@ class BlogController extends Controller
     /** Create blog */
     public function store(): mixed
     {
-        $this->authorize('create', Blog::class);
+        $this->authorizeAction('create');
 
-        $data = $this->request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'required|string',
-            'image'       => 'nullable|image|max:2048',
-        ]);
+        // $data = $this->request->validate([
+        //     'title'       => 'required|string|max:255',
+        //     'description' => 'required|string',
+        //     'image'       => 'nullable|image|max:2048',
+        // ]);
+
+        $data = [
+                'title'       => $this->request->input('title'),
+                'description' => $this->request->input('description'),
+            ];
 
         if ($this->request->hasFile('image')) {
             $data['image'] = $this->request->file('image')->store('blogs', 'public');
         }
 
-        $data['slug']    = Str::slug($data['title']) . '-' . uniqid();
+        $data['slug']    = Str::slug( $data['title']) . '-' . uniqid();
+        // $data['slug']    = Str::slug($data['title']) . '-' . uniqid();
         $data['user_id'] = Auth::id();
 
         $entity = $this->repository->create($data);
@@ -76,7 +82,7 @@ class BlogController extends Controller
     public function show(int|string $id): mixed
     {
         $blog = $this->repository->findOrFail($id);
-        $this->authorize('view', $blog);
+        $this->authorizeAction('view');
 
         $comments = $blog->comments()
             ->where('user_id', Auth::id())
@@ -97,7 +103,8 @@ class BlogController extends Controller
     public function edit(int|string $id): mixed
     {
         $blog = $this->repository->findOrFail($id);
-        $this->authorize('update', $blog);
+        // $this->authorize('update', $blog);
+        $this->authorizeAction('update');
 
         if ($this->request->expectsJson()) {
             return $this->responseDispatcher->edit($blog);
@@ -112,13 +119,18 @@ class BlogController extends Controller
     public function update(int|string $id): mixed
     {
         $blog = $this->repository->findOrFail($id);
-        $this->authorize('update', $blog);
+        // $this->authorize('update', $blog);
+        $this->authorizeAction('update');
+        // $data = $this->request->validate([
+        //     'title'       => 'required|string|max:255',
+        //     'description' => 'required|string',
+        //     'image'       => 'nullable|image|max:2048',
+        // ]);
 
-        $data = $this->request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'required|string',
-            'image'       => 'nullable|image|max:2048',
-        ]);
+        $data = [
+                'title'       => $this->request->input('title'),
+                'description' => $this->request->input('description'),
+            ];
 
         if ($this->request->hasFile('image')) {
             $data['image'] = $this->request->file('image')->store('blogs', 'public');
@@ -139,8 +151,8 @@ class BlogController extends Controller
     public function destroy(int|string $id): mixed
     {
         $blog = $this->repository->findOrFail($id);
-        $this->authorize('delete', $blog);
-
+        // $this->authorize('delete', $blog);
+        $this->authorizeAction('delete');
         $this->repository->delete($id);
 
         if ($this->request->expectsJson()) {
