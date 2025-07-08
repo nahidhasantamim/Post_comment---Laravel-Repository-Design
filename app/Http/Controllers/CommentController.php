@@ -47,10 +47,8 @@ class CommentController extends Controller
     public function store(): mixed
     {
         $this->authorize('create', Comment::class);
-        $data = $this->request->validate([
-            'body'      => 'required|string|max:255',
-            'blog_id'   =>  'required'
-        ]);
+
+        $data = $this->request->except(['_token','_method']);
 
         $data['user_id'] = Auth::id();
         $comment = $this->repository->create($data);
@@ -68,27 +66,26 @@ class CommentController extends Controller
     public function update(int|string $id): mixed
     {
         $comment = $this->repository->findOrFail($id);
+        
         $this->authorize('update', $comment);
+        // $this->authorizeAction('update');
 
-         $data = $this->request->validate([
-            'body'       => 'required|string|max:255'
-        ]);
+        $data = $this->request->except(['_token','_method']);
+
         $this->repository->update($id, $data);
-
-        if ($this->request->expectsJson()) {
-            return $this->responseDispatcher->update(true);
-        }
 
         return redirect()
             ->back()
             ->with('success', __('Comment updated successfully.'));
     }
 
-    /** Delete comment. */
+
     public function destroy(int|string $id): mixed
     {
         $comment = $this->repository->findOrFail($id);
+
         $this->authorize('delete', $comment);
+        
         $this->repository->delete($id);
 
         if ($this->request->expectsJson()) {

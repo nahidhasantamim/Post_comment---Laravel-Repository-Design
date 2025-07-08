@@ -22,25 +22,21 @@ class BlogRequest extends Request
     // For example, when index method in the controller is called a method called indexRules will be triggered here if it is exists.
 
     // For POST /blogs
-    public function postMethodRules(): array
+    public function storeRules(): array
     {
         return [
             'title'       => 'required|string|max:255',
             'description' => 'required|string',
-            'slug'        => 'required|string|unique:blogs,slug',
             'image'       => 'nullable|image|max:2048',
         ];
     }
 
     // For PUT/PATCH /blogs/{id}
-    public function patchMethodRules(): array
+    public function updateRules(): array
     {
-        $id = $this->route('blog'); // or however your route-model binding works
         return [
             'title'       => 'sometimes|required|string|max:255',
             'description' => 'sometimes|required|string',
-            'slug'        => ['sometimes','required','string',
-                              Rule::unique('blogs','slug')->ignore($id)],
             'image'       => 'nullable|image|max:2048',
         ];
     }

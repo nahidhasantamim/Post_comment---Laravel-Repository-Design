@@ -23,7 +23,7 @@
                                 name="title"
                                 id="title"
                                 value="{{ old('title') }}"
-                                required="required"
+                               
                                 class="mt-1 block w-full text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                                 @error('title')
                                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -36,7 +36,7 @@
                                 name="description"
                                 id="description"
                                 rows="6"
-                                required="required"
+                               
                                 class="mt-1 block w-full text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">{{ old('description') }}</textarea>
                             @error('description')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>

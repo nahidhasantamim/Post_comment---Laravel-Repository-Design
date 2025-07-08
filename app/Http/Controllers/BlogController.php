@@ -10,6 +10,7 @@ use App\Models\Blog;
 use App\Policies\BlogPolicy;
 use App\Repositories\BlogRepository;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 /**
  * Class BlogController.
@@ -49,40 +50,13 @@ class BlogController extends Controller
         return parent::index();
     }
 
-    /** Create blog */
-    public function store(): mixed
-    {
-        $this->authorizeAction('create');
-
-        // $data = $this->request->validate([
-        //     'title'       => 'required|string|max:255',
-        //     'description' => 'required|string',
-        //     'image'       => 'nullable|image|max:2048',
-        // ]);
-
-        $data = [
-                'title'       => $this->request->input('title'),
-                'description' => $this->request->input('description'),
-            ];
-
-        if ($this->request->hasFile('image')) {
-            $data['image'] = $this->request->file('image')->store('blogs', 'public');
-        }
-
-        $data['slug']    = Str::slug( $data['title']) . '-' . uniqid();
-        // $data['slug']    = Str::slug($data['title']) . '-' . uniqid();
-        $data['user_id'] = Auth::id();
-
-        $entity = $this->repository->create($data);
-
-        return $this->responseDispatcher->store($entity);
-    }
-
     /** Show blog */
     public function show(int|string $id): mixed
     {
         $blog = $this->repository->findOrFail($id);
-        $this->authorizeAction('view');
+        
+        $this->authorize('view', $blog);
+        // $this->authorizeAction('view');
 
         $comments = $blog->comments()
             ->where('user_id', Auth::id())
@@ -99,69 +73,49 @@ class BlogController extends Controller
         ]);
     }
 
-    /** Edit blog */
-    public function edit(int|string $id): mixed
+    /** Create blog */
+    public function store(): mixed
     {
-        $blog = $this->repository->findOrFail($id);
-        // $this->authorize('update', $blog);
-        $this->authorizeAction('update');
+        $this->authorizeAction('create');
 
-        if ($this->request->expectsJson()) {
-            return $this->responseDispatcher->edit($blog);
+        // $data = $this->request->all();
+        $data = $this->request->except(['_token','_method']);
+
+        if ($this->request->hasFile('image')) {
+            $data['image'] = $this->request->file('image')->store('blogs', 'public');
         }
 
-        return view($this->viewEdit, [
-            'blog' => $blog
-        ]);
+        $data['slug']  = Str::slug( $data['title'] ) . '-' . uniqid();
+
+        $data['user_id'] = Auth::id();
+
+        $entity = $this->repository->create($data);
+
+        return $this->responseDispatcher->store($entity);
     }
 
     /** Update blog*/
     public function update(int|string $id): mixed
     {
         $blog = $this->repository->findOrFail($id);
-        // $this->authorize('update', $blog);
-        $this->authorizeAction('update');
-        // $data = $this->request->validate([
-        //     'title'       => 'required|string|max:255',
-        //     'description' => 'required|string',
-        //     'image'       => 'nullable|image|max:2048',
-        // ]);
+        
+        $this->authorize('update', $blog);
+        // $this->authorizeAction('update');
 
-        $data = [
-                'title'       => $this->request->input('title'),
-                'description' => $this->request->input('description'),
-            ];
+        // $data = $this->request->all();
+        $data = $this->request->except(['_token','_method']);
 
         if ($this->request->hasFile('image')) {
             $data['image'] = $this->request->file('image')->store('blogs', 'public');
         }
 
-        $this->repository->update($id, $data);
+        $data['slug']  = Str::slug( $data['title'] ) . '-' . uniqid();
 
-        if ($this->request->expectsJson()) {
-            return $this->responseDispatcher->update(true);
-        }
+        $this->repository->update($id, $data);
 
         return redirect()
             ->route($this->routeIndex)
             ->with('success', __('Blog updated successfully.'));
-    }
-
-    /** Delete blog */
-    public function destroy(int|string $id): mixed
-    {
-        $blog = $this->repository->findOrFail($id);
-        // $this->authorize('delete', $blog);
-        $this->authorizeAction('delete');
-        $this->repository->delete($id);
-
-        if ($this->request->expectsJson()) {
-            return $this->responseDispatcher->destroy(true);
-        }
-
-        return redirect()
-            ->route($this->routeIndex)
-            ->with('success', __('Blog deleted.'));
     }
 
 

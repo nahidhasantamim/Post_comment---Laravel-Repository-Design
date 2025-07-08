@@ -61,7 +61,10 @@
 
                             <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your comment</label>
                             <textarea id="message" name="body" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your thoughts here..."></textarea>
-                        
+                            @error('body')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+
                             <button
                                 type="submit"
                                 class="btn-sm text-sm py-1 px-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
@@ -114,24 +117,29 @@
                                     <textarea
                                     name="body"
                                     rows="3"
-                                    required
+                                    
                                     class="w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                     >{{ $comment->body }}</textarea>
 
+
+                                    @error('body')
+                                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+
                                     <div class="flex space-x-2">
-                                    <button
-                                        type="submit"
-                                        class="px-2 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none"
-                                    >
-                                        Update
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onclick="toggleEdit({{ $comment->id }})"
-                                        class="px-2 py-1 text-sm bg-gray-400 text-white rounded hover:bg-gray-500 focus:outline-none"
-                                    >
-                                        Cancel
-                                    </button>
+                                        <button
+                                            type="submit"
+                                            class="px-2 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none"
+                                        >
+                                            Update
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onclick="toggleEdit({{ $comment->id }})"
+                                            class="px-2 py-1 text-sm bg-gray-400 text-white rounded hover:bg-gray-500 focus:outline-none"
+                                        >
+                                            Cancel
+                                        </button>
                                     </div>
                                 </form>
                                 </div>

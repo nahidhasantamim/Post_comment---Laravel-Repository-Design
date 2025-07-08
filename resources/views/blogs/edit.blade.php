@@ -11,7 +11,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <form
-                        action="{{ route('blogs.update', $blog) }}"
+                        action="{{ route('blogs.update', $entity) }}"
                         method="POST"
                         enctype="multipart/form-data"
                         class="space-y-6">
@@ -23,8 +23,8 @@
                                 type="text"
                                 name="title"
                                 id="title"
-                                value="{{ old('title', $blog->title) }}"
-                                required="required"
+                                value="{{ old('title', $entity->title) }}"
+                               
                                 class="mt-1 block w-full text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                                 @error('title')
                                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -37,8 +37,8 @@
                                 name="description"
                                 id="description"
                                 rows="6"
-                                required="required"
-                                class="mt-1 block w-full text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">{{ old('description', $blog->description) }}</textarea>
+                                
+                                class="mt-1 block w-full text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">{{ old('description', $entity->description) }}</textarea>
                             @error('description')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -56,7 +56,7 @@
                                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                                 @enderror
 
-                            <img class="rounded-md mt-4 h-40 w-40" src="{{asset('/storage/'.$blog->image)}}" alt="" />
+                            <img class="rounded-md mt-4 h-40 w-40" src="{{asset('/storage/'.$entity->image)}}" alt="" />
                         </div>
 
                         <div class="pt-4">
